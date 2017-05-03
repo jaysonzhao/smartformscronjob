@@ -1,0 +1,110 @@
+.bpmInfoPanel {
+	/*padding:10px 0px;
+	border-bottom:solid 1px #eee;
+	margin-bottom:5px;*/
+}
+.bpmInfoTable {
+	width:100%;
+	padding:0px;
+	border:none;
+	margin:0px;
+	border-collapse:collapse;
+	border-spacing:0px;
+	font-size:12px;
+}
+.bpmInfoTable th, .bpmToolPanel td {
+	padding:5px;
+}
+.bpmInfoTable th {
+	width:100px;
+	font-weight:bold;
+	text-align:left;
+	color:#333;
+}
+.bpmInfoTable td {
+	font-size:12px;
+}
+.graybox {
+	border:solid 1px #CCC;
+	padding:5px;
+	width:80%;
+}
+.bpmBlueBtn {
+	border:none;
+	background-color:#1d84dd;
+	background-repeat:no-repeat;
+	background-position: 8px center;
+	color:white;
+	padding:8px 12px 8px 18px;
+	margin:0px 5px;
+	font-size:14px;
+	cursor:pointer;
+	text-indent:1em;
+	background-repeat:no-repeat;
+	border-radius:3px;
+}
+.bpmBlueBtn:hover {
+	background-color:#3276b1;
+}
+.selectUserBtn {
+	display:inline-block;
+	width:28px;
+	height:28px;
+	background:url(../../images/bpm/manhead.png) center center #bfbfbf no-repeat;
+	position:relative;
+	top:5px;
+	border-radius:3px;
+}
+.selectUserBtn:hover {
+	background-color:#1d84dd;
+}
+
+#rollbackDlg, #transferDlg, #retakeDlg, #oversignDlg, #passbyDlg, #cancelDlg, #userRemindDlg {
+	display:none;
+	padding:10px 20px;
+}
+
+#rollbackDlg table {
+	width:100%;
+	border:none;
+	margin-bottom:10px;
+	border-collapse:collapse;
+	border-spacing:0;
+}
+
+#rollbackDlg table th {
+	font-weight:bold;
+	border:solid 1px #ccc;
+	padding:2px 0px;
+}
+
+#rollbackDlg table td {
+	border:solid 1px #ccc;
+	text-align:center;
+	padding:2px 0px;
+}
+
+#loadingimg_01 {
+	padding:5px 10px 20px;
+}
+
+.auditTable {
+	width:100%;
+	border-collapse:collapse;
+	border-spacing:0px;
+	border:none;
+}
+
+.auditTable th {
+	border:solid 1px #ccc;
+	text-align:center;
+	background-color:#ddd;
+	font-weight:bold;
+	padding:5px;
+}
+
+.auditTable td {
+	border:solid 1px #ccc;
+	padding:5px;
+	text-align:center;
+}

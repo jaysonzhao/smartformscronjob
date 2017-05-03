@@ -1,0 +1,60 @@
+#dlgFind {
+	width:500px; 
+	height:200px; 
+	padding:10px;
+}
+#dlgFind table {
+	width:100%;
+	border:none;
+	border-collapse:collapse;
+	border-spacing:0px;
+}
+#dlgFind table th, #dlgFind table td {
+	border:none;
+}
+
+#dlgReroute table {
+	width:100%;
+	border:none;
+	border-collapse:collapse;
+	border-spacing:0px;
+}
+
+#dlgReroute table th, #dlgReroute table td {
+	border:none;
+	padding:10px;
+}
+
+#dlgReason {
+	padding:10px;
+}
+
+#dlgReason textarea {
+	width:95%;
+	height:80px;
+}
+
+#tbActivityOwner {
+	width:70%; 
+	line-height:1.5em; 
+	height:1.5em
+}
+
+#searchTable {
+	border:0px;
+	margin:0px;
+	border-collapse:collapse;
+	border-spacing:0px;
+}
+
+#searchTable th {
+	width:25%;
+	padding:5px;
+	text-align:left;
+}
+
+#searchTable td {
+	width: 70%;
+	padding:5px;
+	text-align:left;
+}

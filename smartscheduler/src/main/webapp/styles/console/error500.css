@@ -1,0 +1,39 @@
+* {
+	margin:0px;
+	padding:0px;
+}
+
+html, body {
+	width:100%;
+	height:100%;
+	font-size:12px;
+}
+
+#baseContainer {
+	width:99%; 
+	height:99%; 
+	border:solid 3px #eb5606
+}
+
+.errtable {
+	width:1000px;
+	border:none;
+	margin:0 auto;
+	margin-top:40px;
+}
+
+.errtable td {
+	vertical-align: middle;
+}
+
+.errimg {
+	width:40%;
+	padding:5px;
+	text-align:center;
+}
+
+.errmsg {
+	width:60%;
+	padding:5px;
+	text-align:left;
+}

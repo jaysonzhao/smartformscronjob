@@ -1,0 +1,107 @@
+.north{
+height:65px;
+}
+
+.center{
+	
+	
+}
+
+.west{
+	width:190px;
+
+}
+
+a:link {
+ text-decoration: none;
+}
+a:visited {
+ text-decoration: none;
+}
+a:hover {
+ text-decoration: underline;
+}
+a:active {
+ text-decoration: none;
+}
+
+.cs-navi-tab {
+display:block;
+width:100%;
+color: #000000;
+height: 30px;
+padding-left:25px;
+ line-height:30px;  
+}
+.cs-navi-tab:link {
+ text-decoration: none;
+}
+.cs-navi-tab:visited {
+ text-decoration: none;
+}
+.cs-navi-tab:hover {
+ text-decoration: none;
+ 
+ background-color: #E6E6E6;
+}
+.cs-navi-tab:active {
+ text-decoration: none;
+}
+
+
+#topbar {
+    height:65px;
+    background:#06A1DA ;
+    overflow: hidden;
+}
+
+#toptab {
+    height: 65px;
+    width: 100%;
+    border:none;
+}
+
+
+#toptab a {
+ text-decoration: none;
+ color:#FFFFFF;
+}
+
+* {
+	padding: 0px;
+	margin: 0px;
+}
+
+#fm {
+	margin: 0;
+	padding: 10px 30px;
+}
+
+.ftitle {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px 0;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.fitem {
+	margin-bottom: 5px;
+}
+
+.fitem label {
+	display: inline-block;
+	width: 100px;
+}
+
+.fitem input[type=radio] {
+	width: 39px;
+}
+.fitem_member .panel:first-of-type, .fitem_member .memberbutton{
+	float: left;
+}
+.fitem_member .memberbutton{
+	width:60px;
+	text-align: center;
+	padding-top: 98px;
+}

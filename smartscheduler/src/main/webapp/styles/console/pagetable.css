@@ -1,0 +1,17 @@
+/* 应用库设计元素的页面属性表格样式 */
+.prop_table {
+	border:none;
+	width:90%;
+	margin:20px 10px 20px;
+}
+.prop_table th {
+	padding:5px 10px;
+	width:20%;
+}
+.prop_table td {
+	padding:5px 0px 5px 5px;
+	width:75%;
+}
+.prop_table p {
+	padding:2px 0px;
+}

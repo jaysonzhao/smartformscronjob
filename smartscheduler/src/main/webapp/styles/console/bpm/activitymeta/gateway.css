@@ -1,0 +1,140 @@
+#baseContainer {
+	width:100%;
+	margin-top:20px;
+}
+
+#centerPanel {
+	width:1000px;
+	margin:0px auto;
+}
+
+#panel01 {
+	color:white;
+	background: url(title.png) no-repeat;
+	width: 300px;
+    height: 26px;
+    line-height: 26px;
+    text-indent: 20px;
+    border-bottom:solid 2px #eb5606;
+    font-size:14px;
+}
+
+#gatewayList {
+	width:300px;
+	float:left;
+}
+
+#gatewayList table {
+	width:100%;
+	border:none;
+	border-collapse: collapse;
+}
+
+#gatewayList table td {
+	color:#666;
+	padding:15px 10px;
+	text-align:center;
+	font-size:14px;
+	font-weight:bold;
+	border:solid 1px #eee;
+	cursor:pointer;
+}
+
+#gatewayList table td.selected {
+	background-color:#ccc;
+}
+
+#gatewayDetails {
+	float:left;
+	width:695px;
+	margin-left:3px;
+}
+
+#bottombar {
+	text-align:right;
+	margin:20px 10px;
+}
+
+#btnSave {
+	width: 100px;
+	line-height: 36px;
+	border: none;
+	background-color: #DF5206;
+	border-radius: 3px;
+	color: #fff;
+	cursor:pointer;
+}
+
+.conditionTable {
+	width:100%;
+	border:none;
+	border-collapse: collapse;
+}
+
+.conditionTable th {
+	text-align:left;
+	font-weight:normal;
+	color:#666;
+	font-size:14px;
+	padding:5px;
+	width:150px;
+}
+
+.conditionTable td {
+	color:#666;
+	font-size:14px;
+	padding:5px;
+	width:240px;
+	font-weight:normal;
+}
+
+.conditionTable td ul {
+	margin-left:0px !important;
+}
+
+.conditionTable td ul li {
+	width:100px; 
+	display:inline-block; 
+	height:25px; 
+	line-height:25px;
+}
+
+.conditionGrid {
+	width:100%;
+	border:none;
+	border-collapse: collapse;
+}
+
+.conditionGrid th {
+	border:solid 1px #686868;
+	font-weight:normal;
+	background-color:#efefef;
+	width:15%;
+}
+
+.conditionGrid td {
+	border:solid 1px #c0c0c0;
+	font-weight:normal;
+	cursor:pointer;
+	width:15%;
+}
+
+.conditionGrid td.selected {
+	background-color:#efefef;
+}
+
+.conditionGridToolbar {
+	border:solid 1px #b3b3b3;
+	background-color:#f6f6f6;
+	padding:2px;
+	border-bottom:none;
+}
+
+.dlgCondition {
+	padding:20px;
+	display:none;
+}
+
+.fitem label {
+	width:120px;
+}

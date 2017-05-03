@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ehcache xsi:noNamespaceSchemaLocation="../xsd/ehcache.xsd"
+         updateCheck="false" monitoring="autodetect"
+         dynamicConfig="true">
+ <diskStore path="java.io.tmpdir"/>
+ 
+ 
+ 
+ 
+ 
+ 
+ <!--timeToIdleSeconds 当缓存闲置n秒后销毁 --> 
+<!--timeToLiveSeconds 当缓存存活n秒后销毁 --> 
+<!-- 
+缓存配置 
+       name:缓存名称。 
+       maxElementsInMemory：缓存最大个数。 
+       eternal:对象是否永久有效，一但设置了，timeout将不起作用。 
+       timeToIdleSeconds：设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=false对象不是永久有效时使用，可选属性，默认值是0，也就是可闲置时间无穷大。 
+       timeToLiveSeconds：设置对象在失效前允许存活时间（单位：秒）。最大时间介于创建时间和失效时间之间。仅当eternal=false对象不是永久有效时使用，默认是0.，也就是对象存活时间无穷大。 
+       overflowToDisk：当内存中对象数量达到maxElementsInMemory时，Ehcache将会对象写到磁盘中。 
+       diskSpoolBufferSizeMB：这个参数设置DiskStore（磁盘缓存）的缓存区大小。默认是30MB。每个Cache都应该有自己的一个缓冲区。 
+       maxElementsOnDisk：硬盘最大缓存个数。 
+       diskPersistent：是否缓存虚拟机重启期数据 Whether the disk store persists between restarts of the Virtual Machine. The default value is false. 
+       diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒。 
+       memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用）。 
+       clearOnFlush：内存数量最大时是否清除。 
+-->
+<!--  
+ <defaultCache
+        maxElementsInMemory="100000"
+        eternal="false"
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="120"
+        overflowToDisk="false"
+        />  -->
+        
+        <defaultCache 
+  		maxElementsInMemory="10000"
+  		 eternal="false"
+  		timeToIdleSeconds="120" 
+     	timeToLiveSeconds="120" 
+  		overflowToDisk="true" 
+  		diskPersistent="false" 
+  		diskExpiryThreadIntervalSeconds= "120"
+         />
+         
+    <!-- 缓存文档数据 -->
+    <cache 
+        name="DatDocument"
+  		maxElementsInMemory="10000"
+  		 eternal="false"
+  		timeToIdleSeconds="20" 
+     	timeToLiveSeconds="30" 
+  		overflowToDisk="true" 
+  		diskPersistent="false" 
+  		diskExpiryThreadIntervalSeconds= "120"
+         />
+         <!-- 缓存业务控件信息 -->
+        <cache 
+        name="DetFormBizPanel"
+  		maxElementsInMemory="10000"
+  		 eternal="false"
+  		timeToIdleSeconds="20" 
+     	timeToLiveSeconds="30" 
+  		overflowToDisk="true" 
+  		diskPersistent="false" 
+  		diskExpiryThreadIntervalSeconds= "120"
+         />
+          <cache 
+        name="BpmInstanceInfo"
+  		maxElementsInMemory="10000"
+  		 eternal="false"
+  		timeToIdleSeconds="20" 
+     	timeToLiveSeconds="30" 
+  		overflowToDisk="true" 
+  		diskPersistent="false" 
+  		diskExpiryThreadIntervalSeconds= "120"
+         />
+         
+        <!--  缓存流程环节 -->
+         <cache 
+        name="BpmActivityMeta"
+  		maxElementsInMemory="10000"
+  		 eternal="false"
+  		timeToIdleSeconds="20" 
+     	timeToLiveSeconds="30" 
+  		overflowToDisk="true" 
+  		diskPersistent="false" 
+  		diskExpiryThreadIntervalSeconds= "120"
+         />
+         
+      <!--    部门信息 -->
+          <cache 
+        name="OrgDepartment"
+  		maxElementsInMemory="10000"
+  		 eternal="false"
+  		timeToIdleSeconds="1000" 
+     	timeToLiveSeconds="10800" 
+  		overflowToDisk="true" 
+  		diskPersistent="false" 
+  		diskExpiryThreadIntervalSeconds= "120"
+         />
+     <!--   人员信息 -->
+        <cache 
+        name="OrgEmployee"
+  		maxElementsInMemory="10000"
+  		 eternal="false"
+  		timeToIdleSeconds="1000" 
+     	timeToLiveSeconds="10800" 
+  		overflowToDisk="true" 
+  		diskPersistent="false" 
+  		diskExpiryThreadIntervalSeconds= "120"
+         />
+         
+         
+ <!-- 缓存Jbo对象 -->
+ <cache name="jboCache"
+  		maxElementsInMemory="1"
+  		
+  		timeToIdleSeconds="10000"
+  		timeToLiveSeconds="10000"
+  		overflowToDisk="true"
+  		diskPersistent="false"  />
+
+ <!-- 缓存基本的数据，如：maxapps,maxobject,maxattribute等 -->
+ <cache name="_baseCache"
+  		maxElementsInMemory="10000"
+  		eternal="true"
+  		timeToIdleSeconds="10000"
+  		timeToLiveSeconds="10000"
+  		overflowToDisk="true"
+  		diskPersistent="false"  />
+
+ <!-- 缓存基本的数据，如：domain 数据字典 等 -->
+ <cache name="_domainCache"
+  		maxElementsInMemory="10000"
+  		eternal="false"
+  		timeToIdleSeconds="10000"
+  		timeToLiveSeconds="10000"
+  		overflowToDisk="true"
+  		diskPersistent="false"  />
+
+ <!-- 缓存基本的数据，如：domain 数据字典 等 -->
+ <cache name="_permissionCache"
+  		maxElementsInMemory="10000"
+  		eternal="false"
+  		timeToIdleSeconds="120"
+  		timeToLiveSeconds="120"
+  		overflowToDisk="true"
+  		diskPersistent="false"  />
+  		
+  		
+  		 <!-- 缓存通过api接口登录 缓存用户的登录信息-->
+ <cache name="_apiUserData"
+  		maxElementsInMemory="10000"
+  		eternal="false"
+  		timeToIdleSeconds="74400"
+  		timeToLiveSeconds="74400"
+  		overflowToDisk="true"
+  		diskPersistent="false"  />
+  		
+  		<!-- 临时缓冲数据区，缓存15分钟 -->
+  		<cache name="_sysTmpData"
+	  		maxElementsInMemory="100"
+	  		eternal="false"
+	  		timeToIdleSeconds="900"
+	  		timeToLiveSeconds="900"
+	  		overflowToDisk="true"
+	  		diskPersistent="false"  />
+
+</ehcache>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.1.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+	<context:component-scan base-package="com.gzsolartech" />
+	<!-- 支持aop注解 -->
+	<aop:aspectj-autoproxy />
+	<!-- 支持注解配置 -->
+	<context:annotation-config />
+	
+	<context:property-placeholder location="classpath:hibernate.properties" />
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${database.driverClassName}"></property>
+		<property name="jdbcUrl" value="${database.url}"></property>
+		<property name="user" value="${database.username}"></property>
+		<property name="password" value="${database.password}"></property>
+
+		<property name="acquireIncrement" value="10"></property>
+		<property name="initialPoolSize" value="5"></property>
+		<property name="maxIdleTime" value="200"></property>
+		<property name="maxPoolSize" value="200"></property>
+		<property name="minPoolSize" value="5"></property>
+
+		<property name="acquireRetryDelay" value="30"></property>
+		<property name="acquireRetryAttempts" value="60"></property>
+		<property name="breakAfterAcquireFailure" value="false"></property>
+		<property name="autoCommitOnClose" value="true"></property>
+		
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<!-- <bean id="sessionFactory" class="org.springframework.orm.hibernate4.HibernateTemplate"> -->
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+
+		<property name="hibernateProperties">
+			<!-- 从配置文件中得到各种属性的值，更改的时候只需要改变配置文件从的值即可 -->
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.connection.SetBigStringTryClob">${hibernate.connection.SetBigStringTryClob}</prop>
+				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+				<!-- <prop key="hibernate.current_session_context_class">thread</prop> -->
+		 		 <!-- 开启查询缓存 -->
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<!-- 开启二级缓存 -->
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<!-- 高速缓存提供程序 --> 
+				<!-- 由于spring也使用了Ehcache, 保证双方都使用同一个缓存管理器 -->
+				<prop key="hibernate.cache.region.factory_class">
+    					 org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+				</prop>
+			</props>
+		</property>
+		<property name="packagesToScan">
+			<list>
+				<value>com.gzsolartech.smartforms.entity</value>
+				<value>com.gzsolartech.portal.entity</value>
+				<value>com.gzsolartech.bpmportal.entity</value>
+				<value>com.gzsolartech.smartforms.entity.bpm</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<!-- 定义事务管理器 -->
+
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- 申明annotation 加载事务驱动 -->
+	<tx:annotation-driven transaction-manager="txManager"
+		proxy-target-class="true" />
+	<!-- hibernate4必须配置为开启事务 否则 getCurrentSession()获取不到 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="import*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="edit*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="parse*" propagation="REQUIRED" /> 
+			<tx:method name="merge*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="put*" propagation="REQUIRED" />
+			<tx:method name="use*" propagation="REQUIRED" />
+			<tx:method name="start*" propagation="REQUIRED" />
+			<tx:method name="stop*" propagation="REQUIRED" />
+			<tx:method name="set*" propagation="REQUIRED" />
+			<tx:method name="execute*" propagation="REQUIRED" />
+		 	<tx:method name="get*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="count*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="list*" propagation="REQUIRED" read-only="true" /> 
+			<tx:method name="*" propagation="REQUIRED" read-only="true"  />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config expose-proxy="true">
+		<!-- 只对业务逻辑层实施事务 -->
+		<aop:pointcut id="txPointcut"
+			expression="(
+			execution(* com.gzsolartech.smartforms.service..*.*(..))
+			|| execution(* com.gzsolartech.smartforms.ldap..*.*(..))
+			|| execution(* com.gzsolartech.bpmportal.service..*.*(..))
+			|| execution(* com.gzsolartech.schedule.service..*.*(..))
+			|| execution(* com.gzsolartech.smartforms.webload.DatDocumentSaveInterceptor.*(..))
+			)" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut" />
+	</aop:config>
+
+		<!-- 调度工厂 -->
+ <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+  <property name="dataSource">    
+           <ref bean="dataSource" />    
+       </property>  
+   <property name="configLocation" value="classpath:quartz.properties" />  
+       <property name="applicationContextSchedulerContextKey"    
+           value="applicationContextKey" />    
+       <property name="autoStartup" value="true" />
+</bean> 
+
+
+	
+	
+		  
+</beans>

@@ -1,0 +1,51 @@
+@charset "utf-8";
+*{font-family: "Microsoft YaHei" ! important;}
+/* CSS Document reset */
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,
+dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    font-size: 14px;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1 ! important;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+a{text-decoration: none;color:#666;}
+
+
+/*--------------------------------------------------------------------------------*/
+
+/*公共部分调用*/
+.clean{clean:both;}
+
+/*page*/
+.pager{height:35px;line-height:35px;font-size: 12px;margin: 1px 0px;text-align: center;color: #2E6AB1;overflow: hidden;}
+.pager a{border:1px solid #eee;color:#2E6AB1;margin:0px 5px;padding:5px 8px;text-decoration: none;}
+.pager a.hover,.pager a.active{background-color:#1F8CDC;border-color:#1F8CDC;color:#FFF;text-decoration: none;}
+.pager a.disabled{color:#555;cursor:auto;}

@@ -1,0 +1,142 @@
+.desktopInfoDiv {
+    border-top: 2px solid #EB5606;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    margin-top: 40px;
+}
+.desktopInfoDiv p {
+    width: 325px;
+    position: absolute;
+    top: -2px;
+    background: url(title.png) no-repeat;
+    height: 26px;
+    top: -28px;
+    color: #ffffff;
+    text-indent: 20px;
+    line-height: 30px;
+    left:-1px;
+}
+.desktopInfoDiv img {
+     float: left;
+ }
+.desktopTabDiv {
+    margin: 0 auto;
+    padding: 0px 20px 10px 10px;
+}
+.desktopTabDiv table {
+    width: 100%;
+    height: 145px;
+}
+.desktopTabDiv table tr td {
+    color: #333333;
+}
+ table tbody tr  {
+    height:40px;
+}
+.desktopListTabDiv {
+    margin: 0 auto;
+    padding: 0px 2px 2px 2px;
+}
+.desktopListTabDiv table {
+    width: 100%;
+    height: 247px;
+    margin-top: 2%;
+}
+.desktopListTabDiv table tr td {
+    color: #333333;
+}
+#gatewayLink {
+	display:inline-block;
+	color:black;
+	margin-left:50px;
+	border:none;
+	text-decoration: none;
+	height:1em;
+	line-height:1em;
+	padding-right:10px;
+}
+#gatewayLink:hover {
+	color:#eb5606;
+}
+
+.content {
+    width: 1100px;
+    margin: 0 auto;
+}
+
+
+.select1 {
+	background-color: #ccc;
+}
+
+.group tr td:nth-child(1) {
+	text-align: center;
+	text-indent: 10px;
+}
+
+.close_btn {
+	display: none !important;
+}
+
+#desktopTab tr {
+	line-height: 40px;
+}
+
+.flri {
+    margin-top: 0px;
+    float: right;
+    line-height: 80px;
+}
+
+
+.flri button {
+    width: 100px;
+    margin-left: 10px;
+    line-height: 36px;
+    border: none;
+    background-color: #DF5206;
+    border-radius: 3px;
+    color: #fff;
+}
+
+.persoN {
+    clear: both;
+    height: 400px;
+    margin: 2%;
+}
+
+.persoNLf {
+    width: 300px;
+    float: left;
+}
+
+.persoNMd {
+    float: left;
+    width: 72px;
+    padding-top: 260px;
+}
+.persoNRg {
+    float: left;
+}
+
+.persoNMd button {
+    display: block;
+    width: 36px;
+    height: 26px;
+    margin: 15px auto;
+}
+.RT {
+    background-color: #DF5206;
+    color: rgb(255, 255, 255);
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-radius: 3px;
+}

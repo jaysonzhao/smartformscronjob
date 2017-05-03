@@ -1,0 +1,26 @@
+/*main*/
+.main{width: 1100px;margin:0 auto; position:relative;color: #333;}
+
+
+
+.Title{height: 35px;}
+
+.seach{float: right;line-height: 28px;color: #fff;background-color:#1f8cdc;border: 0px;width: 100px;border-radius: 3px; }
+
+.form{border-top:1px solid #ccc;border-bottom:1px solid #ccc;padding: 20px 0 25px 0;margin-bottom: 25px;}
+.form table tr{line-height: 50px;}
+.form table input{line-height: 34px;border:1px solid #d6dbdf;text-indent: 10px;height: 28px;}
+.textR{text-align: right;padding-right: 10px;}
+.group{width: 100%;border:1px solid #eee;}
+.group thead th{line-height: 30px;background-color: #1f8cdc;color: #fff;}
+.group tr td{text-align: center;height: 50px;border-bottom: 1px solid #eee;color: #666;}
+.group tr td:nth-child(1){text-align:left;text-indent:10px;}
+.group tr td:nth-child(2){text-align:left;}
+.group tr td b{font-weight: 600;}
+.group th:nth-child(1){width: 449px! important;}
+.group th:nth-child(2){width: 180px! important;text-align: left;}
+.group th:nth-child(3){width: 80px! important;}
+.group th:nth-child(4){width: 190px! important;}
+/* .group th:nth-child(5){width: 100px! important;}
+.group th:nth-child(6){width: 170px! important;} */
+.group tbody tr:hover{color:#1f8cdc! important;cursor: pointer! important;}
