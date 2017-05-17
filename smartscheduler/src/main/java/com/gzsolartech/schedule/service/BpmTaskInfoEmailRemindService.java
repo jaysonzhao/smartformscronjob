@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gzsolartech.bpmportal.util.email.EmailNotificationUtil;
 import com.gzsolartech.smartforms.constant.SysConfigurationTypeName;
 import com.gzsolartech.smartforms.entity.DatContentTemplate;
 import com.gzsolartech.smartforms.entity.OrgEmployee;
@@ -22,7 +22,6 @@ import com.gzsolartech.smartforms.service.DatDocumentService;
 import com.gzsolartech.smartforms.service.SysConfigurationService;
 import com.gzsolartech.smartforms.service.bpm.BpmGlobalConfigService;
 import com.gzsolartech.smartforms.service.bpm.BpmTaskInfoService;
-import com.gzsolartech.smartforms.utils.MailUtil;
 /**
  * 
 * @ClassName: BpmTaskInfoEmailRemindService 
@@ -45,6 +44,13 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 	private DatContentTemplateService datContentTemplateService;
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
+	@Autowired
+	private SenEmailService senEmailService;
+	/**
+	 *执行邮件提醒的操作
+	 * @return void    返回类型 
+	 * @throws
+	 */
 	public void execute() {
 		//获取所的的待办
 		List<BpmTaskInfo> bpmTaskInfos = bpmTaskInfoService.getAllReceivedTask();
@@ -70,7 +76,8 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 				  OrgEmployee employee=gdao.findById(OrgEmployee.class, empId);
 				  if(employee!=null){
 					  String email=employee.getEmail();
-					  email="wuwd@gzsolartech.com";
+					  System.out.println("邮件提醒: "+employee.getNickName()+" email="+email);
+					  //email="wuwd@gzsolartech.com";
 					 if(StringUtils.isNotBlank(email)){
 						 String taskList=taskInfo(tasks,employee.getNickName());
 						 DatContentTemplate datContentTemplate=datContentTemplateService.loadByCode("BPMTIER01");
@@ -81,7 +88,7 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 							 content=datContentTemplate.getTextContent();
 						}
 						 //发送邮件
-						 sendEmail(email,title,content+taskList);
+						 senEmailService.sendEmail(email,title,content+taskList,null);
 					 }
 				  }
 			   }
@@ -108,11 +115,11 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 			String documentId=bpmTaskInfo.getDocumentId();
 			Map<String,Object> data=datDocumentService.getDocumentById(documentId);
 			String host=bpmGlobalConfigService.getWebContext();
-			System.out.println("host:"+host);
+			//System.out.println("host:"+host);
 			String href=host+"/console/template/engine/opendocument/"+data.get("__appid")+"/"+documentId+".xsp?mode=edit&taskId="+bpmTaskInfo.getTaskId();
 			content+="<tr><th style='font-weight: normal;'>"
-					+ "<a style=\"color:blue\" target=\"_blank\" href='"+href+"'>"+data.get("docTitle")+"</a></th>"
-					+ "<th style='font-weight: normal;'>申请人</th>"
+					+ "<a style=\"color:blue\" target=\"_blank\" href='"+href+"'>"+data.get("orderNum")+"</a></th>"
+					+ "<th style='font-weight: normal;'>"+data.get("empName")+"</th>"
 					+ "<th style='font-weight: normal;'>"+nickName+"</th>"
 					+ "<th style='font-weight: normal;'>"+bpmTaskInfo.getTaskName()+"</th>"
 					+ "<th style='font-weight: normal;'>"+data.get("_createTime")+"</th></tr>";
@@ -129,7 +136,7 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 	 * @return void    返回类型 
 	 * @throws
 	 */
-	public void sendEmail(final String recipientTmp,final String titleTmp,final String contentTmp){
+/*	public void sendEmail(final String recipientTmp,final String titleTmp,final String contentTmp){
 		Map<String, Object> config = sysConfigurationService
 				.getSysConfiguration(SysConfigurationTypeName.SYSTEM_CONFIG);
 		final String SMTPAddress = config.get("SMTPAddress") + "";
@@ -145,10 +152,11 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 								port, email, account, password,
 								recipientTmp, titleTmp, contentTmp,
 								true, false);
-						JSONObject jsoResult = new JSONObject(result);
-						if (!jsoResult.optBoolean("success", false)) {
-							LOGGER.error("邮件发送失败" + result);
-						}
+						new EmailNotificationUtil().execute(account, password, recipientTmp, titleTmp, contentTmp);
+						//JSONObject jsoResult = new JSONObject(result);
+					   //	if (!jsoResult.optBoolean("success", false)) {
+					   //LOGGER.error("邮件发送失败" + result);
+					   //	}
 					} catch (Exception e) {
 						LOGGER.error("邮件发送失败", e);
 					}
@@ -159,7 +167,7 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 		} catch (Exception e) {
 			LOGGER.error("邮件发送失败", e);
 		}
-	}
+	}*/
 
 }
 
