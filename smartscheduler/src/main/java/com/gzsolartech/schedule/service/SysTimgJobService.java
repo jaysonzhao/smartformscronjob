@@ -474,4 +474,6 @@ public class SysTimgJobService  extends BaseDataService implements
 			return (String) data.get(0).get("UPDATE_TIME");
 		}
 	}
+	
+	
 }

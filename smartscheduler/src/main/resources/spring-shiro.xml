@@ -42,7 +42,7 @@
             <util:map>
              <entry key="datAppAuthorizationFileter" value-ref="datAppAuthorizationFileter"/> 
              <entry key="documentAuthorizationFileter" value-ref="documentAuthorizationFileter"/> 
-             <entry key="menuAuthorizationFilter" value-ref="menuAuthorizationFilter"/> 
+             <!-- <entry key="menuAuthorizationFilter" value-ref="menuAuthorizationFilter"/>  -->
             </util:map>
         </property> 
 		<!-- 自定义权限配置 -->
