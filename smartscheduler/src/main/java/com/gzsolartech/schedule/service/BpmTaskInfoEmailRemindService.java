@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gzsolartech.bpmportal.util.email.EmailNotificationUtil;
-import com.gzsolartech.smartforms.constant.SysConfigurationTypeName;
 import com.gzsolartech.smartforms.entity.DatContentTemplate;
 import com.gzsolartech.smartforms.entity.OrgEmployee;
 import com.gzsolartech.smartforms.entity.bpm.BpmTaskInfo;
@@ -22,6 +20,7 @@ import com.gzsolartech.smartforms.service.DatDocumentService;
 import com.gzsolartech.smartforms.service.SysConfigurationService;
 import com.gzsolartech.smartforms.service.bpm.BpmGlobalConfigService;
 import com.gzsolartech.smartforms.service.bpm.BpmTaskInfoService;
+import com.gzsolartech.smartforms.utils.FreeMarkUtil;
 /**
  * 
 * @ClassName: BpmTaskInfoEmailRemindService 
@@ -45,7 +44,7 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	@Autowired
-	private SenEmailService senEmailService;
+	private SendEmailService sendEmailService;
 	/**
 	 *执行邮件提醒的操作
 	 * @return void    返回类型 
@@ -76,10 +75,9 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 				  OrgEmployee employee=gdao.findById(OrgEmployee.class, empId);
 				  if(employee!=null){
 					  String email=employee.getEmail();
-					  System.out.println("邮件提醒: "+employee.getNickName()+" email="+email);
+					  LOGGER.debug("邮件提醒: "+employee.getNickName()+" email="+email);
 					  //email="wuwd@gzsolartech.com";
 					 if(StringUtils.isNotBlank(email)){
-						 String taskList=taskInfo(tasks,employee.getNickName());
 						 DatContentTemplate datContentTemplate=datContentTemplateService.loadByCode("BPMTIER01");
 							String content="下列待办信息需要您及时处理:<br>";
 							String title="每日待办信息提醒";
@@ -87,8 +85,10 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 							title=datContentTemplate.getTitle();
 							 content=datContentTemplate.getTextContent();
 						}
+						 Map<String,Object> datas=taskInfo(tasks,employee.getNickName());
+						content =FreeMarkUtil.renderTplBody(content, datas);
 						 //发送邮件
-						 senEmailService.sendEmail(email,title,content+taskList,null);
+						 sendEmailService.sendEmail(email,title,content,null);
 					 }
 				  }
 			   }
@@ -103,71 +103,23 @@ public class BpmTaskInfoEmailRemindService extends BaseDataService {
 	 * @return void    返回类型 
 	 * @throws
 	 */
-	public String taskInfo(List<BpmTaskInfo> bpmTaskInfos,String nickName){
-		String content="<table border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
-		content+="<tr style='background:#DDEDFB;'>"
-				+ "<th style='width:170px;'>申请单号</th>"
-				+ "<th style='width: 150px;'>申请人</th>"
-				+ "<th style='width:150px;' >当前处理人</th>"
-				+ "<th style='width: 180px;'>当前环节</th>"
-				+ "<th style='width: 170px;'>起草时间</th></tr>";
+	public Map<String,Object> taskInfo(List<BpmTaskInfo> bpmTaskInfos,String nickName){
+		List<Map<String,Object>> documents=new ArrayList<Map<String,Object>>();
+		String host=bpmGlobalConfigService.getWebContext();
 		for(BpmTaskInfo bpmTaskInfo:bpmTaskInfos){
 			String documentId=bpmTaskInfo.getDocumentId();
+			if(StringUtils.isNotBlank(documentId)){
 			Map<String,Object> data=datDocumentService.getDocumentById(documentId);
-			String host=bpmGlobalConfigService.getWebContext();
-			//System.out.println("host:"+host);
 			String href=host+"/console/template/engine/opendocument/"+data.get("__appid")+"/"+documentId+".xsp?mode=edit&taskId="+bpmTaskInfo.getTaskId();
-			content+="<tr><th style='font-weight: normal;'>"
-					+ "<a style=\"color:blue\" target=\"_blank\" href='"+href+"'>"+data.get("orderNum")+"</a></th>"
-					+ "<th style='font-weight: normal;'>"+data.get("empName")+"</th>"
-					+ "<th style='font-weight: normal;'>"+nickName+"</th>"
-					+ "<th style='font-weight: normal;'>"+bpmTaskInfo.getTaskName()+"</th>"
-					+ "<th style='font-weight: normal;'>"+data.get("_createTime")+"</th></tr>";
+			data.put("_href", href);
+			data.put("_taskName", bpmTaskInfo.getTaskName());
+			data.put("_nickName", nickName);
+			documents.add(data);
+			}
 		}
-		 content+="</table>";
-		return  content;
+		Map<String,Object> datas=new HashMap<String,Object>();
+		datas.put("datas",documents);
+		return  datas;
 	}
-	
-	/**
-	 * 发送邮件通知
-	 *@param recipientTmp 邮件接收者
-	 *@param titleTmp  标题
-	 *@param contentTmp 邮件内容
-	 * @return void    返回类型 
-	 * @throws
-	 */
-/*	public void sendEmail(final String recipientTmp,final String titleTmp,final String contentTmp){
-		Map<String, Object> config = sysConfigurationService
-				.getSysConfiguration(SysConfigurationTypeName.SYSTEM_CONFIG);
-		final String SMTPAddress = config.get("SMTPAddress") + "";
-		final String port = config.get("port") + "";
-		final String email = config.get("email") + "";
-		final String account = config.get("account") + "";
-		final String password = config.get("password") + "";
-		try {
-			Runnable r = new Runnable() {
-				public void run() {
-					try {
-						String result = MailUtil.sendMail(SMTPAddress,
-								port, email, account, password,
-								recipientTmp, titleTmp, contentTmp,
-								true, false);
-						new EmailNotificationUtil().execute(account, password, recipientTmp, titleTmp, contentTmp);
-						//JSONObject jsoResult = new JSONObject(result);
-					   //	if (!jsoResult.optBoolean("success", false)) {
-					   //LOGGER.error("邮件发送失败" + result);
-					   //	}
-					} catch (Exception e) {
-						LOGGER.error("邮件发送失败", e);
-					}
-				}
-			};
-			Thread t = new Thread(r);
-			t.start();
-		} catch (Exception e) {
-			LOGGER.error("邮件发送失败", e);
-		}
-	}*/
-
 }
 

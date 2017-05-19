@@ -22,7 +22,12 @@ public void run(String jobId) {
 	// TODO Auto-generated method stub
 	BpmTaskInfoHastenService bpmTaskInfoHastenService = (BpmTaskInfoHastenService) applicationContext
 			.getBean("bpmTaskInfoHastenService");
-	bpmTaskInfoHastenService.execute();
+	try {
+		bpmTaskInfoHastenService.execute();
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 }
 }
 
