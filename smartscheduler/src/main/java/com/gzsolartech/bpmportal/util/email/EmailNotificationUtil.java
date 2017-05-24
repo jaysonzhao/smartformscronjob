@@ -1,8 +1,12 @@
 package com.gzsolartech.bpmportal.util.email;
 
-import javax.xml.ws.Holder;
+import java.rmi.RemoteException;
 
-import com.alibaba.fastjson.JSON;
+import javax.xml.rpc.holders.BooleanHolder;
+import javax.xml.rpc.holders.StringHolder;
+
+import org.tempuri.SendMailSoapProxy;
+
 import com.gzsolartech.smartforms.extproperty.EmailNotificationExtProperty;
 
 public class EmailNotificationUtil implements EmailNotificationExtProperty {
@@ -10,7 +14,18 @@ public class EmailNotificationUtil implements EmailNotificationExtProperty {
 	@Override
 	public Object execute(String account, String password, String address,
 			String title, String content) {
-		SendMail sm = new SendMail();
+		BooleanHolder sendMailForEIPResult = new BooleanHolder();
+		StringHolder strErrorMsg = new StringHolder();
+		SendMailSoapProxy prox=new SendMailSoapProxy();
+		try {
+			prox.sendMailForEIP("BPMServer@aactechnologies.com", address, title,
+					content, account, password, "", "", sendMailForEIPResult, strErrorMsg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		System.out.println("调用接口发送邮件"+address+" result:"+sendMailForEIPResult.value+", errmsg:"+strErrorMsg.value);
+		return null;
+		/*SendMail sm = new SendMail();
 		SendMailSoap soap = sm.getSendMailSoap();
 		//System.out.println(soap.test());
 		Holder<Boolean> sendResult = new Holder<Boolean>();
@@ -22,12 +37,23 @@ public class EmailNotificationUtil implements EmailNotificationExtProperty {
 		//System.out.println("内容:"+content);
 		//System.out.println("调用接口发送邮件result:"+JSON.toJSONString(sendResult));
 		System.out.println("调用接口发送邮件result:"+sendResult.value+", errmsg:"+errmsg.value);
-		return null;
+		return null;*/
 	}
 
 	public Object execute(String account, String password, String address,
 			String title, String content,String copyTo) {
-		SendMail sm = new SendMail();
+		BooleanHolder sendMailForEIPResult = new BooleanHolder();
+		StringHolder strErrorMsg = new StringHolder();
+		SendMailSoapProxy prox=new SendMailSoapProxy();
+		try {
+			prox.sendMailForEIP("BPMServer@aactechnologies.com", address, title,
+					content, account, password,copyTo, "", sendMailForEIPResult, strErrorMsg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		System.out.println("调用接口发送邮件"+address+" result:"+sendMailForEIPResult.value+", errmsg:"+strErrorMsg.value);
+		return null;
+		/*SendMail sm = new SendMail();
 		SendMailSoap soap = sm.getSendMailSoap();
 		//System.out.println(soap.test());
 		Holder<Boolean> sendResult = new Holder<Boolean>();
@@ -35,6 +61,6 @@ public class EmailNotificationUtil implements EmailNotificationExtProperty {
 		soap.sendMailForEIP("BPMServer@aactechnologies.com", address, title,
 				content, account, password, copyTo, "", sendResult, errmsg);
 		System.out.println("抄送:调用接口发送邮件result:"+sendResult.value+", errmsg:"+errmsg.value);
-		return null;
+		return null;*/
 	}
 }
