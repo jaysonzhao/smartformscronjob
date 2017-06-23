@@ -41,11 +41,11 @@
 	function openDlg() {
 		$('#sysTimeJob_dlg').dialog('open').dialog('setTitle', ' ');
 		$('#fm').form('clear');
-		$("#errorStop").attr("checked", "checked");
-		$("#errorNotify").attr("checked", "checked");
-		$("#jobType").val("custom");
+		//$("#errorStop").attr("checked", "checked");
+		//$("#errorNotify").attr("checked", "checked");
+	//	$("#jobType").val("custom");
 
-		$("#runDuration").textbox('setValue', "-1");
+		//$("#runDuration").textbox('setValue', "-1");
 		$("#schedulerName").val("");
 		$("#appId").val("");
 		//getForms();
@@ -64,14 +64,14 @@
 	function saveSysTimeJob() {
 		var values = $("#fm").serialize();
 		if ($("#fm").form('validate')) {
-			if ($("#jobType").val() == "collection") {
+			/* if ($("#jobType").val() == "collection") {
 				var formId = $('#formId').combobox('getValues')
 				if (formId == "") {
 					alert("数据采集至少需要选择一个表单");
 					return false;
 				}
-			}
-			var errorNotify = $('input[name="errorNotify"]:checked ').val();
+			} */
+		/* 	var errorNotify = $('input[name="errorNotify"]:checked ').val();
 			console.log("errorNotify:" + errorNotify)
 			if (errorNotify == "enabled") {
 				var notifyEmail = $("#notifyEmail").val();
@@ -79,7 +79,7 @@
 					alert("请填写邮件地址");
 					return false;
 				}
-			}
+			} */
 
 			$("#dlg_btnsave").linkbutton("disable");
 			$
@@ -125,7 +125,7 @@
 						class="easyui-textbox" style="width: 280px;" required="true"
 						name="cronExpression" />
 				</div>
-				<div class="fitem">
+			<!-- 	<div class="fitem">
 					<label>任务类型</label> <select onchange="return jobTypeChange();"
 						id="jobType" name="jobType"
 						style="-webkit-border-radius: 6px 6px 6px 6px; border-radius: 6px 6px 6px 6px; margin-left: 0px; margin-right: 0px; padding-top: 3px; padding-bottom: 3px; width: 280px;">
@@ -143,7 +143,7 @@
 					<label>邮件地址</label> <input class="easyui-validatebox"
 						validType="email" invalidMessage="请填写正确的邮件格式"
 						style="width: 280px;" name="notifyEmail" id="notifyEmail" />
-				</div>
+				</div> -->
 			<%-- 	<div class="fitem">
 					<label>应用库</label>
 					<sot:combobox id="appId" name="appId"
@@ -170,7 +170,7 @@
 					</select>
 				</div>
 
-				<div class="fitem">
+			<!-- 	<div class="fitem">
 					<label>异常通知</label> <input id="errorNotify" name="errorNotify"
 						type="radio" value="disabled" />关闭 <input name="errorNotify"
 						type="radio" value="enabled">启用
@@ -180,7 +180,7 @@
 					<label>异常停止</label> <input id="errorStop" name="errorStop"
 						type="radio" value="disabled" />关闭 <input name="errorStop"
 						type="radio" value="enabled" />启用
-				</div>
+				</div> -->
 
 
 			</form>

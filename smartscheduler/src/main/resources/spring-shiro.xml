@@ -53,30 +53,7 @@
 	<bean id="chainDefinitionSectionMetaSource" class="com.gzsolartech.smartforms.shiro.ChainDefinitionSectionMetaSource">
 		<property name="filterChainDefinitions">
 			<value>
-		/scripts/** = anon
-    		/styles/** = anon
-    		/images/** = anon
-    		/api/** = anon
-    		/resources/** = anon
-    		/console/bpm/taskInfo/push.xsp= anon
-    		/services/SapBpmService**= anon
-    		/console/bpm/taskInfo/pullOrigMsg.xsp= anon
-    		/services/OrganizeSyncService**= anon
-    		/wsdl/OrganizeSyncService**=anon
-    		/console/bpm/adminact/combinetoken/**.xsp= anon
-    		/console/login.xsp = anon
-    		/console/user/login.action=anon
-    		/bpmportal/bpmProcessTask/EIPGetallToDoList.xsp= anon
-    		 /resources/images/**=anon
-    		 /console/index.action=authc,menuAuthorizationFilter
-    		 /console/index.xsp=authc,menuAuthorizationFilter
-    		/console/datdoc/index/**=authc,datAppAuthorizationFileter 
-    	    /console/datapp/designer/**=authc,datAppAuthorizationFileter 
-    	    /console/template/engine/openform/**=authc,documentAuthorizationFileter
-    	    /console/datdoc/save/**=authc,documentAuthorizationFileter
-    	   /console/datdoc/edit/**=authc,documentAuthorizationFileter
-    	   /console/datdoc/delete/**=authc,documentAuthorizationFileter
-    		/**=authc,menuAuthorizationFilter
+    		/**= anon
 			</value>
 		</property>
 	</bean>

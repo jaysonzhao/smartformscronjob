@@ -1,7 +1,5 @@
 package com.gzsolartech.schedule.quartz.task;
 
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -32,12 +30,13 @@ public class SynchronizedDataTask extends BaseTask{
 	public void run(String jobId) {
 		SynchronizedDataService synchronizedDataService = 
 				applicationContext.getBean(SynchronizedDataService.class);
+		LOGGER.info("数据同步开始：");
 		try {
 			synchronizedDataService.execute();
 		} catch (SmartformsException e) {
 			LOGGER.error("同步数据时出现异常：",e);
 			e.printStackTrace();
 		}
-		LOGGER.info("数据同步完成："+new Date());
+		
 	}
 }
