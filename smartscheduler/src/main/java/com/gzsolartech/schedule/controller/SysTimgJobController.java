@@ -132,8 +132,9 @@ public class SysTimgJobController extends BaseWebController {
 			sysTimgJob.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 			sysTimgJob.setCreator(getEmployeeName());
 			sysTimgJob.setUpdateBy(getEmployeeName());
-			sysTimgJobService.saveOrUpdate(sysTimgJob);
+			String jobId=sysTimgJobService.saveOrUpdate(sysTimgJob);
 			results.put("state", true);
+			results.put("msg", jobId);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			results.put("state", false);
