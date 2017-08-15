@@ -19,7 +19,7 @@ public abstract class BaseTask implements Serializable, ApplicationContextAware 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BaseTask.class);
 	private static final long serialVersionUID = 1L;
-	public static ApplicationContext applicationContext;
+	public ApplicationContext applicationContext;
 
 	public abstract void run(String jobId);
 
