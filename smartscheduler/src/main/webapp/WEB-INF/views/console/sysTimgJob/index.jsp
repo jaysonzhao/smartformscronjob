@@ -122,8 +122,8 @@ $('#datagrid').datagrid({
 						}
 					 },
 					  {field:'startRunTime',title:'最后一次运行开始时间',width:150,align:'center'},
-					  {field:'lastRunTime',title:'最后一次运行结束时间',width:150,align:'center'},
-					   {field:'source',title:'源表',width:100,align:'center'},
+					  {field:'lastRunTime',title:'最后一次运行结束时间',width:150,align:'center'}
+					  /*  {field:'source',title:'源表',width:100,align:'center'},
 					   {field:'target',title:'目标表',width:100,align:'center'},
 					   {
 										field : 'creator',
@@ -158,7 +158,7 @@ $('#datagrid').datagrid({
 													.pattern("yyyy-MM-dd hh:mm:ss");
 											return s;
 										}
-									} 
+									}  */
 			    ]],
 			   onSelect: function (rowData) {
 	    	   $('#datagrid').datagrid("unselectAll");
