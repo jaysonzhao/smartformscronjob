@@ -18,7 +18,6 @@ import com.gzsolartech.bpmportal.entity.AacEmployee;
 import com.gzsolartech.bpmportal.service.AACEmployeeService;
 import com.gzsolartech.bpmportal.service.KronosService;
 import com.gzsolartech.smartforms.constant.bpm.BpmMailSendType;
-import com.gzsolartech.smartforms.constant.bpm.BpmRoutingType;
 import com.gzsolartech.smartforms.entity.DatContentTemplate;
 import com.gzsolartech.smartforms.entity.OrgEmployee;
 import com.gzsolartech.smartforms.entity.bpm.BpmActivityMeta;
