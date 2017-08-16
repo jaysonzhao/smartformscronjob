@@ -1,6 +1,7 @@
 package com.gzsolartech.schedule.controller;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -123,7 +125,7 @@ public class SysTimgJobController extends BaseWebController {
 	 * @return Map<String,Object> 返回类型
 	 * @throws
 	 */
-	@RequestMapping("/saveOrUpdate")
+	@RequestMapping(value="/saveOrUpdate", method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> saveOrUpdate(SysTimgJob sysTimgJob) {
 		Map<String, Object> results = new HashMap<String, Object>();
@@ -132,8 +134,11 @@ public class SysTimgJobController extends BaseWebController {
 			sysTimgJob.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 			sysTimgJob.setCreator(getEmployeeName());
 			sysTimgJob.setUpdateBy(getEmployeeName());
-			sysTimgJobService.saveOrUpdate(sysTimgJob);
+			LOGGER.debug("正在保存调度任务......");
+			String jobId=sysTimgJobService.saveOrUpdate(sysTimgJob);
+			LOGGER.debug("调度任务保存成功！");
 			results.put("state", true);
+			results.put("msg", jobId);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			results.put("state", false);
@@ -151,13 +156,15 @@ public class SysTimgJobController extends BaseWebController {
 	 * @throws
 	 */
 	@ResponseBody
-	@RequestMapping("/deletTasks")
+	@RequestMapping(value="/deletTasks", method=RequestMethod.POST)
 	public Map<String, Object> deletTasks(
 			@RequestParam("jobsId[]") String[] jobsId) {
 		Map<String, Object> results = new HashMap<String, Object>();
 		try {
 			// 先停止调度任务进程
+			LOGGER.debug("正在删除调度任务......\r\n待删除任务ID："+Arrays.toString(jobsId));
 			taskServiceManager.deleteJobs(jobsId);
+			LOGGER.debug("完成删除调度任务！");
 			// 删除配置的调度任务
 			sysTimgJobService.deleteJob(jobsId);
 			results.put("success", true);

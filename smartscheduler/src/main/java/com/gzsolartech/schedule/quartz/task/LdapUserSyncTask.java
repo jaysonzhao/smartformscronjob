@@ -40,7 +40,7 @@ public class LdapUserSyncTask extends BaseTask {
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		// TODO Auto-generated method stub
-		LdapUserSyncTask.applicationContext = applicationContext;
+		this.applicationContext = applicationContext;
 	}
 
 }

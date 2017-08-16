@@ -120,15 +120,18 @@ public class SysTimgJobService  extends BaseDataService implements
 	 * @return void 返回类型
 	 * @throws
 	 */
-	public void saveOrUpdate(SysTimgJob sysTimgJob) throws Exception {
+	public String saveOrUpdate(SysTimgJob sysTimgJob) throws Exception {
+		String jobId="";
 		if (StringUtils.isBlank(sysTimgJob.getJobId())) {
-			sysTimgJob.setJobId(UUID.randomUUID().toString());
+			jobId=UUID.randomUUID().toString();
+			sysTimgJob.setJobId(jobId);
 			sysTimgJob.setJobGroup(UUID.randomUUID().toString());
 			sysTimgJob.setJobStatus("2");
 			gdao.save(sysTimgJob);
 		} else {
 			SysTimgJob job = gdao.findById(SysTimgJob.class,
 					sysTimgJob.getJobId());
+			jobId=sysTimgJob.getJobId();
 			sysTimgJob.setJobStatus("2");
 			BeanUtils.copyProperties(sysTimgJob, job, "createTime", "creator",
 					"lastRunTime", "startRunTime");
@@ -138,6 +141,7 @@ public class SysTimgJobService  extends BaseDataService implements
 			} catch (Exception e) {
 			}
 		}
+		return jobId;
 	}
 
 	/**

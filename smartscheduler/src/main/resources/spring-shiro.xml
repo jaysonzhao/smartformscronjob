@@ -42,7 +42,7 @@
             <util:map>
              <entry key="datAppAuthorizationFileter" value-ref="datAppAuthorizationFileter"/> 
              <entry key="documentAuthorizationFileter" value-ref="documentAuthorizationFileter"/> 
-             <!-- <entry key="menuAuthorizationFilter" value-ref="menuAuthorizationFilter"/>  -->
+             <entry key="menuAuthorizationFilter" value-ref="menuAuthorizationFilter"/> 
             </util:map>
         </property> 
 		<!-- 自定义权限配置 -->
@@ -53,7 +53,10 @@
 	<bean id="chainDefinitionSectionMetaSource" class="com.gzsolartech.smartforms.shiro.ChainDefinitionSectionMetaSource">
 		<property name="filterChainDefinitions">
 			<value>
-    		/**= anon
+		/scripts/** = anon
+    		/styles/** = anon
+    		/images/** = anon
+    		/** = anon
 			</value>
 		</property>
 	</bean>
