@@ -84,66 +84,71 @@ public class BpmArchiveService extends BaseDataService {
 			BpmInstanceInfo instanceInfo, BpmArchiveStrategy strategy) {
 		String instanceId=instanceInfo.getInstanceId();
 		String documentId=instanceInfo.getDocumentId();
-		HttpReturnStatus instStatus=instUtils.getInstance(cookie, instanceId);
-		if (!BpmClientUtils.isErrorResult(instStatus)) {
-			//判断流程实例状态是否为已完成，只有完成状态的流程实例才能进行归档
-			JSONObject jsoMsg=new JSONObject(instStatus.getMsg());
-			JSONObject jsoData=jsoMsg.getJSONObject("data");
-			String instExecStat=jsoData.optString("executionState", "");
-			//TODO:判断归档策略是否要需要关联子流程实例的完成情况
-			//TODO:判断当前实例的关联子流程实例是否已完成
-			//TODO:到底需要关联几层子流程实例？
-			if (BpmApiEntityStatus.INSTANCE_FINISHED_EXECSTATE.equals(instExecStat) && 
-					instExecStat.equals(instanceInfo.getInstanceExecState())) {
-				//调用BPM API删除流程实例
-				HttpReturnStatus delinstStatus=instUtils.deleteInstance(cookie, instanceId);
-				if (!BpmClientUtils.isErrorResult(delinstStatus)) {
-					//创建流程实例归档详细信息
-					BpmArchivedInstanceInfo archiveInstance=new BpmArchivedInstanceInfo();
-					archiveInstance.setDocumentId(documentId);
-					DatDocument datdoc=datDocumentService.loadWithDatApp(documentId);
-					if (datdoc!=null) {
-						archiveInstance.setAppId(datdoc.getDatApplication().getAppId());
+		try {
+			HttpReturnStatus instStatus=instUtils.getInstance(cookie, instanceId);
+			if (!BpmClientUtils.isErrorResult(instStatus)) {
+				//判断流程实例状态是否为已完成，只有完成状态的流程实例才能进行归档
+				JSONObject jsoMsg=new JSONObject(instStatus.getMsg());
+				JSONObject jsoData=jsoMsg.getJSONObject("data");
+				String instExecStat=jsoData.optString("executionState", "");
+				//TODO:判断归档策略是否要需要关联子流程实例的完成情况
+				//TODO:判断当前实例的关联子流程实例是否已完成
+				//TODO:到底需要关联几层子流程实例？
+				if (BpmApiEntityStatus.INSTANCE_FINISHED_EXECSTATE.equals(instExecStat) && 
+						instExecStat.equals(instanceInfo.getInstanceExecState())) {
+					//调用BPM API删除流程实例
+					HttpReturnStatus delinstStatus=instUtils.deleteInstance(cookie, instanceId);
+					if (!BpmClientUtils.isErrorResult(delinstStatus)) {
+						//创建流程实例归档详细信息
+						BpmArchivedInstanceInfo archiveInstance=new BpmArchivedInstanceInfo();
+						archiveInstance.setDocumentId(documentId);
+						DatDocument datdoc=datDocumentService.loadWithDatApp(documentId);
+						if (datdoc!=null) {
+							archiveInstance.setAppId(datdoc.getDatApplication().getAppId());
+						}
+						archiveInstance.setInstanceId(instanceId);
+						archiveInstance.setInstanceDetails(instStatus.getMsg());
+						archiveInstance.setCreator(bpmcfg.getBpmAdminName());
+						archiveInstance.setCreateTime(new Timestamp(System.currentTimeMillis()));
+						gdao.save(archiveInstance);
+						
+						//更新流程实例文档信息的归档状态
+						BpmInstanceInfo dbinstInfo=gdao.findById(BpmInstanceInfo.class, 
+								instanceInfo.getDocumentId());
+						if (dbinstInfo!=null) {
+							dbinstInfo.setIsArchived(EntitySwitchSignal.YES);
+							dbinstInfo.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+							dbinstInfo.setUpdateBy(bpmcfg.getBpmAdminName());
+							gdao.update(dbinstInfo);
+						}
+						
+						//记录归档日志
+						String msg="成功归档流程实例！instanceId="+instanceId+", documentId="+documentId;
+						sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
+								bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
+						LOG.info(msg);
+					} else {
+						String msg="删除流程实例失败！instanceId="+instanceId+", documentId="+documentId;
+						msg+="\r\n 详细信息："+delinstStatus.getMsg();
+						sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
+								bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
+						LOG.error(msg);
 					}
-					archiveInstance.setInstanceId(instanceId);
-					archiveInstance.setInstanceDetails(instStatus.getMsg());
-					archiveInstance.setCreator(bpmcfg.getBpmAdminName());
-					archiveInstance.setCreateTime(new Timestamp(System.currentTimeMillis()));
-					gdao.save(archiveInstance);
-					
-					//更新流程实例文档信息的归档状态
-					BpmInstanceInfo dbinstInfo=gdao.findById(BpmInstanceInfo.class, 
-							instanceInfo.getDocumentId());
-					if (dbinstInfo!=null) {
-						dbinstInfo.setIsArchived(EntitySwitchSignal.YES);
-						dbinstInfo.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-						dbinstInfo.setUpdateBy(bpmcfg.getBpmAdminName());
-						gdao.update(dbinstInfo);
-					}
-					
-					//记录归档日志
-					String msg="成功归档流程实例！instanceId="+instanceId+", documentId="+documentId;
-					sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
-							bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
-					LOG.info(msg);
 				} else {
-					String msg="删除流程实例失败！instanceId="+instanceId+", documentId="+documentId;
-					msg+="\r\n 详细信息："+delinstStatus.getMsg();
+					String msg="流程实例不是完成状态，无法进行归档！instanceId="+instanceId+", documentId="+documentId;
 					sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
 							bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
 					LOG.error(msg);
 				}
 			} else {
-				String msg="流程实例不是完成状态，无法进行归档！instanceId="+instanceId+", documentId="+documentId;
+				String msg="获取流程实例详细信息失败，无法进行归档！instanceId="+instanceId+", documentId="+documentId;
 				sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
 						bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
 				LOG.error(msg);
 			}
-		} else {
-			String msg="获取流程实例详细信息失败，无法进行归档！instanceId="+instanceId+", documentId="+documentId;
-			sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
-					bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
-			LOG.error(msg);
+		} catch (Exception ex) {
+			LOG.error("归档流程实例的时候发生异常！instanceId="+instanceId+
+					", documentId="+documentId, ex);
 		}
 	}
 }
