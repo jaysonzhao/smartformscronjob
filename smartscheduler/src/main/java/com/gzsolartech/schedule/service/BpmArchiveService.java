@@ -117,8 +117,9 @@ public class BpmArchiveService extends BaseDataService {
 								instanceInfo.getDocumentId());
 						if (dbinstInfo!=null) {
 							dbinstInfo.setIsArchived(EntitySwitchSignal.YES);
-							dbinstInfo.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-							dbinstInfo.setUpdateBy(bpmcfg.getBpmAdminName());
+							//归档实例时不修改更新时间和更新人
+//							dbinstInfo.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+//							dbinstInfo.setUpdateBy(bpmcfg.getBpmAdminName());
 							gdao.update(dbinstInfo);
 						}
 						
