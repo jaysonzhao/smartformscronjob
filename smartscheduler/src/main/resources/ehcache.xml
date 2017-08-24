@@ -168,5 +168,4 @@
 	  		timeToLiveSeconds="900"
 	  		overflowToDisk="true"
 	  		diskPersistent="false"  />
-
 </ehcache>

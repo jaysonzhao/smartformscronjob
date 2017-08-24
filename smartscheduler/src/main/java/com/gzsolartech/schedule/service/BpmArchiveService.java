@@ -96,44 +96,52 @@ public class BpmArchiveService extends BaseDataService {
 				//TODO:到底需要关联几层子流程实例？
 				if (BpmApiEntityStatus.INSTANCE_FINISHED_EXECSTATE.equals(instExecStat) && 
 						instExecStat.equals(instanceInfo.getInstanceExecState())) {
-					//调用BPM API删除流程实例
-					HttpReturnStatus delinstStatus=instUtils.deleteInstance(cookie, instanceId);
-					if (!BpmClientUtils.isErrorResult(delinstStatus)) {
-						//创建流程实例归档详细信息
-						BpmArchivedInstanceInfo archiveInstance=new BpmArchivedInstanceInfo();
-						archiveInstance.setDocumentId(documentId);
-						DatDocument datdoc=datDocumentService.loadWithDatApp(documentId);
-						if (datdoc!=null) {
-							archiveInstance.setAppId(datdoc.getDatApplication().getAppId());
+					//判断流程实例完成时间是否满足归档条件
+					int finishedDay=Math.abs(strategy.getFinishedDay());
+					long finishedSecs=finishedDay*86400;  //转换为秒
+					long t1=instanceInfo.getUpdateTime().getTime();
+					long tnow=System.currentTimeMillis();
+					long secSpan=(Math.abs(tnow-t1))/1000;
+					if (secSpan>finishedSecs) {
+						//调用BPM API删除流程实例
+						HttpReturnStatus delinstStatus=instUtils.deleteInstance(cookie, instanceId);
+						if (!BpmClientUtils.isErrorResult(delinstStatus)) {
+							//创建流程实例归档详细信息
+							BpmArchivedInstanceInfo archiveInstance=new BpmArchivedInstanceInfo();
+							archiveInstance.setDocumentId(documentId);
+							DatDocument datdoc=datDocumentService.loadWithDatApp(documentId);
+							if (datdoc!=null) {
+								archiveInstance.setAppId(datdoc.getDatApplication().getAppId());
+							}
+							archiveInstance.setInstanceId(instanceId);
+							archiveInstance.setInstanceDetails(instStatus.getMsg());
+							archiveInstance.setCreator(bpmcfg.getBpmAdminName());
+							archiveInstance.setCreateTime(new Timestamp(System.currentTimeMillis()));
+							gdao.save(archiveInstance);
+							
+							//更新流程实例文档信息的归档状态
+							BpmInstanceInfo dbinstInfo=gdao.findById(BpmInstanceInfo.class, 
+									instanceInfo.getDocumentId());
+							if (dbinstInfo!=null) {
+								dbinstInfo.setIsArchived(EntitySwitchSignal.YES);
+								//归档实例时不修改更新时间和更新人
+//								dbinstInfo.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+//								dbinstInfo.setUpdateBy(bpmcfg.getBpmAdminName());
+								gdao.update(dbinstInfo);
+							}
+							
+							//记录归档日志
+							String msg="成功归档流程实例！instanceId="+instanceId+", documentId="+documentId;
+							sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
+									bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
+							LOG.info(msg);
+						} else {
+							String msg="删除流程实例失败！instanceId="+instanceId+", documentId="+documentId;
+							msg+="\r\n 详细信息："+delinstStatus.getMsg();
+							sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
+									bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
+							LOG.error(msg);
 						}
-						archiveInstance.setInstanceId(instanceId);
-						archiveInstance.setInstanceDetails(instStatus.getMsg());
-						archiveInstance.setCreator(bpmcfg.getBpmAdminName());
-						archiveInstance.setCreateTime(new Timestamp(System.currentTimeMillis()));
-						gdao.save(archiveInstance);
-						
-						//更新流程实例文档信息的归档状态
-						BpmInstanceInfo dbinstInfo=gdao.findById(BpmInstanceInfo.class, 
-								instanceInfo.getDocumentId());
-						if (dbinstInfo!=null) {
-							dbinstInfo.setIsArchived(EntitySwitchSignal.YES);
-							//归档实例时不修改更新时间和更新人
-//							dbinstInfo.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-//							dbinstInfo.setUpdateBy(bpmcfg.getBpmAdminName());
-							gdao.update(dbinstInfo);
-						}
-						
-						//记录归档日志
-						String msg="成功归档流程实例！instanceId="+instanceId+", documentId="+documentId;
-						sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
-								bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
-						LOG.info(msg);
-					} else {
-						String msg="删除流程实例失败！instanceId="+instanceId+", documentId="+documentId;
-						msg+="\r\n 详细信息："+delinstStatus.getMsg();
-						sysOptrLogService.create(OperationType.BPM_INSTANCE_ARCHIVE, msg, 
-								bpmcfg.getSchedulerHost(), bpmcfg.getBpmAdminName());
-						LOG.error(msg);
 					}
 				} else {
 					String msg="流程实例不是完成状态，无法进行归档！instanceId="+instanceId+", documentId="+documentId;

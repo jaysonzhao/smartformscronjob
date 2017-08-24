@@ -51,6 +51,11 @@ public class BpmArchiveInstanceTask extends BaseTask {
 		BpmArchiveStrategy strategy=bpmArchiveStrategyService.loadByJobId(jobId, true);
 		if (strategy!=null) {
 			if (EntitySwitchSignal.YES.equals(strategy.getIsEnabled())) {
+				if (null==strategy.getFinishedDay()) {
+					LOG.error("归档策略没有设置完成天数，无法进行归档！strategyId="+strategy.getStrategyId()+
+							", strategyName="+strategy.getStrategyName());
+					return;
+				}
 				Set<BpmArchiveStrategyAssign> assignSet=strategy.getBpmArchiveStrategyAssignSet();
 				if (!CollectionUtils.isEmpty(assignSet)) {
 					//获取策略中要归档的流程
