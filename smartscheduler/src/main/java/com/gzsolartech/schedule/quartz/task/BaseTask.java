@@ -10,7 +10,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.gzsolartech.smartforms.constant.SysConfigurationTypeName;
-import com.gzsolartech.smartforms.controller.DatApplicationController;
 import com.gzsolartech.smartforms.entity.SysTimgJob;
 import com.gzsolartech.smartforms.service.SysConfigurationService;
 import com.gzsolartech.smartforms.utils.MailUtil;
