@@ -92,6 +92,7 @@ public class BpmArchiveInstanceTask extends BaseTask {
 					List<Cookie> cookies=new ArrayList<Cookie>();
 					HttpReturnStatus loginStatus=bpmUtils.doLogin(bpmcfg.getBpmAdminName(), 
 							bpmcfg.getBpmAdminPsw(), cookies);
+					bpmUtils.closeClient();
 					if (CollectionUtils.isEmpty(cookies)) {
 						LOG.error("登录失败，没有获取到身份Cookie！loginMsg="+loginStatus.getMsg());
 						return;
