@@ -30,7 +30,7 @@
 		<property name="acquireIncrement" value="10"></property>
 		<property name="initialPoolSize" value="5"></property>
 		<property name="maxIdleTime" value="200"></property>
-		<property name="maxPoolSize" value="200"></property>
+		<property name="maxPoolSize" value="30"></property>
 		<property name="minPoolSize" value="5"></property>
 
 		<property name="acquireRetryDelay" value="30"></property>

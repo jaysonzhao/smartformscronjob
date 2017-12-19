@@ -40,7 +40,6 @@ import com.gzsolartech.smartforms.service.bpm.BpmGlobalConfigService;
 import com.gzsolartech.smartforms.service.bpm.BpmTaskInfoService;
 import com.gzsolartech.smartforms.utils.UserDialogTagUtils;
 import com.gzsolartech.smartforms.utils.bpm.BpmClientUtils;
-import com.gzsolartech.smartforms.utils.bpm.BpmInstanceUtils;
 import com.gzsolartech.smartforms.utils.bpm.BpmTaskUtils;
 
 /**
@@ -235,6 +234,8 @@ public class BpmAutoCommitTask extends BaseTask {
 						params.put("nextOwners", jsoNextOwners.toString());
 						params.put("nextNodes", jsoNextNodes.toString());
 						params.put("nextOwnerNames", jsoNextOwnerNames.toString());
+						//自动提交标志位
+						params.put("autoCommit", "1");
 						
 						HttpReturnStatus commitStatus=httpUtils.doPost(httpClient, url, params);
 						if (HttpStatus.SC_OK!=commitStatus.getCode()) {
