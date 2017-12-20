@@ -1,1 +1,19 @@
 /target/
+
+*.class
+
+# Package Files #
+
+*.war
+*.ear
+/.classpath
+/.project
+/.settings/
+/README.md
+/.project
+/bin
+/build/
+.settings
+*hibernate.properties
+/.apt_generated/
+
