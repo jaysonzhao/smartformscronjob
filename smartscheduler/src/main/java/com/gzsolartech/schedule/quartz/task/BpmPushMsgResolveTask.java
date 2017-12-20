@@ -13,8 +13,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 
 import com.gzsolartech.smartforms.entity.bpm.BpmGlobalConfig;
 import com.gzsolartech.smartforms.entity.bpm.BpmOriginalPushMsg;
