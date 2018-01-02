@@ -82,6 +82,10 @@ public class BpmAutoCommitTask extends BaseTask {
 			HttpLightUtils httpUtils=new HttpLightUtils();
 			CloseableHttpClient httpClient=httpUtils.getClient();
 			String apiHost=bpmcfg.getBpmApiHost();
+			if (StringUtils.isBlank(apiHost)) {
+				LOG.error("无法确定smartformAPI平台的资源位置，请设置表单平台API接口地址！");
+				return;
+			}
 			apiHost = apiHost.endsWith("/") ? apiHost : apiHost+"/";
 			//登录获取Token
 			String loginUrl=apiHost+MessageFormat.format(BpmApiPathPrefix.BPM_LOGIN, 
