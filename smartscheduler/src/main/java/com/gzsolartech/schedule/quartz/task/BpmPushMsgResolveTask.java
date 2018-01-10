@@ -39,7 +39,7 @@ public class BpmPushMsgResolveTask extends BaseTask {
 
 	@Override
 	public void run(String jobId) {
-		//获取创建了2分钟但是还没有解析的推送消息
+		//获取还没有解析的推送消息
 		BpmOriginalPushMsgService bpmOriginalPushMsgService=applicationContext
 				.getBean(BpmOriginalPushMsgService.class);
 		BpmGlobalConfigService bpmGlobalConfigService=applicationContext
