@@ -1,12 +1,19 @@
 package com.gzsolartech.schedule.quartz.task;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -60,6 +67,7 @@ public class BpmAutoCommitTask extends BaseTask {
 
 	@Override
 	public void run(String jobId) {
+		LocalDateTime ldtnow=LocalDateTime.now();
 		BpmGlobalConfigService bpmGlobalConfigService=(BpmGlobalConfigService)applicationContext
 				.getBean(BpmGlobalConfigService.class);
 		BpmGlobalConfig bpmcfg=bpmGlobalConfigService.getFirstActConfig();
@@ -73,7 +81,7 @@ public class BpmAutoCommitTask extends BaseTask {
 		OrgEmployeeService orgEmployeeService=(OrgEmployeeService)applicationContext
 				.getBean(OrgEmployeeService.class);
 		OrgEmployee orgadminEmp=orgEmployeeService.getEmpByName(bpmcfg.getBpmAdminName());
-		if (orgadminEmp==null && StringUtils.isBlank(orgadminEmp.getEmpNum())) {
+		if (orgadminEmp==null || StringUtils.isBlank(orgadminEmp.getEmpNum())) {
 			LOG.error("找不到BPM管理员帐号，无法进行待办自动提交操作！");
 			return;
 		}
@@ -166,6 +174,43 @@ public class BpmAutoCommitTask extends BaseTask {
 									+ "taskState="+taskState+", "
 									+ "taskStatus="+taskStatus);
 							continue;
+						}
+						
+						//判断是否要延迟执行提交
+						String delayCls=taskActyMeta.getCommitDelayCls();
+						if (StringUtils.isNotBlank(delayCls)) {
+							int delayMins=0;
+							try {
+								Class<?> clz = Class.forName(delayCls);
+        						Object obj = clz.newInstance();
+        						 // 获取方法
+        					    Method md = obj.getClass().getDeclaredMethod(
+        								"execute", String.class, String.class);
+        						 // 调用方法
+        					    Integer result=(Integer)md.invoke(obj, todoTask.getDocumentId(), 
+        					    		todoTask.getTaskId());
+        					    delayMins=result.intValue();
+							} catch (Exception ex) {
+								delayMins=0;
+								LOG.error("提交延迟执行策略异常！", ex);
+							}
+							
+							if (delayMins>0) {
+								//根据任务ID获取待办任务列表，然后获取待办任务创建时间
+								List<BpmTaskInfo> tasks=bpmTaskInfoService.getTaskInfoByTaskId(todoTask.getTaskId());
+								if (!CollectionUtils.isEmpty(tasks)) {
+									BpmTaskInfo task1=tasks.get(0);
+									//计算任务创建时间+延迟执行时间
+									Timestamp tscreate=task1.getCreateTime();
+									LocalDateTime ldtCreated=LocalDateTime.ofInstant(
+											Instant.ofEpochMilli(tscreate.getTime()), ZoneId.of("Asia/Shanghai"));
+									LocalDateTime newLdtTime=ldtCreated.plusMinutes(delayMins);
+									if (ldtnow.isBefore(newLdtTime)) {
+										//当前时间在延迟执行的时间之前，还不能提交待办，等待下一次
+										continue;
+									}
+								}
+							}
 						}
 						
 						//进行自动提交
