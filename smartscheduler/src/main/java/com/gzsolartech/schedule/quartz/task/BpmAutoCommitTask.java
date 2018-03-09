@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.cookie.Cookie;
@@ -40,6 +38,7 @@ import com.gzsolartech.smartforms.entity.bpm.BpmGlobalConfig;
 import com.gzsolartech.smartforms.entity.bpm.BpmTaskInfo;
 import com.gzsolartech.smartforms.exceptions.SmartformsException;
 import com.gzsolartech.smartforms.exentity.HttpReturnStatus;
+import com.gzsolartech.smartforms.extproperty.bpm.ICommitTaskDelayPolicy;
 import com.gzsolartech.smartforms.service.DatDocumentService;
 import com.gzsolartech.smartforms.service.OrgEmployeeService;
 import com.gzsolartech.smartforms.service.bpm.BpmActivityMetaService;
@@ -183,13 +182,18 @@ public class BpmAutoCommitTask extends BaseTask {
 							try {
 								Class<?> clz = Class.forName(delayCls);
         						Object obj = clz.newInstance();
-        						 // 获取方法
-        					    Method md = obj.getClass().getDeclaredMethod(
-        								"execute", String.class, String.class);
-        						 // 调用方法
-        					    Integer result=(Integer)md.invoke(obj, todoTask.getDocumentId(), 
-        					    		todoTask.getTaskId());
-        					    delayMins=result.intValue();
+        						if (obj instanceof ICommitTaskDelayPolicy) {
+        							// 获取方法
+            					    Method md = obj.getClass().getDeclaredMethod(
+            								"execute", String.class, String.class);
+            						 // 调用方法
+            					    Integer result=(Integer)md.invoke(obj, todoTask.getDocumentId(), 
+            					    		todoTask.getTaskId());
+            					    delayMins=result.intValue();
+        						} else {
+        							LOG.error("延迟执行策略反射类不是ICommitTaskDelayPolicy接口的实现类！"
+        									+ "className="+delayCls);
+        						}
 							} catch (Exception ex) {
 								delayMins=0;
 								LOG.error("提交延迟执行策略异常！", ex);
@@ -236,6 +240,11 @@ public class BpmAutoCommitTask extends BaseTask {
 						List<BpmActivityMeta> nextActies=bpmActivityMetaService
 								.getNextHumanActivity(taskActyMeta.getActivityBpdId(), 
 										todoTask.getSnapshotBpdId(), todoTask.getDocumentId());
+						//getNextHumanActivity方法坑爹，返回值包含了非人工环节
+						nextActies=nextActies.stream().filter(acty->
+							BpmActivityType.ACTIVITY.equals(acty.getActivityType()) &&
+							BpmActivityType.USERTASK.equals(acty.getBpmTaskType()))
+								.collect(Collectors.toList());
 						if (!CollectionUtils.isEmpty(nextActies)) {
 							//先按照序号，再按照名称，对环节元数据从小到大进行排序
 							nextActies=nextActies.stream().sorted((e1, e2)->{
