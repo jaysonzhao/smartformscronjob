@@ -28,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 import com.gzsolartech.schedule.constant.BpmApiPathPrefix;
 import com.gzsolartech.schedule.utils.HttpLightUtils;
 import com.gzsolartech.smartforms.constant.EntitySwitchSignal;
+import com.gzsolartech.smartforms.constant.FormCtrlPrefix;
 import com.gzsolartech.smartforms.constant.bpm.BpmActivityType;
 import com.gzsolartech.smartforms.constant.bpm.BpmApiEntityStatus;
 import com.gzsolartech.smartforms.constant.bpm.RollbackGroupStrategy;
@@ -40,6 +41,7 @@ import com.gzsolartech.smartforms.exceptions.SmartformsException;
 import com.gzsolartech.smartforms.exentity.HttpReturnStatus;
 import com.gzsolartech.smartforms.extproperty.bpm.ICommitTaskDelayPolicy;
 import com.gzsolartech.smartforms.service.DatDocumentService;
+import com.gzsolartech.smartforms.service.GroovyEngineService;
 import com.gzsolartech.smartforms.service.OrgEmployeeService;
 import com.gzsolartech.smartforms.service.bpm.BpmActivityMetaService;
 import com.gzsolartech.smartforms.service.bpm.BpmGlobalConfigService;
@@ -76,6 +78,9 @@ public class BpmAutoCommitTask extends BaseTask {
 				.getBean(BpmActivityMetaService.class);
 		DatDocumentService datDocumentService=(DatDocumentService)applicationContext
 				.getBean(DatDocumentService.class);
+		GroovyEngineService groovyEngineService=(GroovyEngineService)applicationContext
+				.getBean(GroovyEngineService.class);
+		
 		//获取BPM管理员的待办
 		OrgEmployeeService orgEmployeeService=(OrgEmployeeService)applicationContext
 				.getBean(OrgEmployeeService.class);
@@ -180,20 +185,26 @@ public class BpmAutoCommitTask extends BaseTask {
 						if (StringUtils.isNotBlank(delayCls)) {
 							int delayMins=0;
 							try {
-								Class<?> clz = Class.forName(delayCls);
-        						Object obj = clz.newInstance();
-        						if (obj instanceof ICommitTaskDelayPolicy) {
-        							// 获取方法
-            					    Method md = obj.getClass().getDeclaredMethod(
-            								"execute", String.class, String.class);
-            						 // 调用方法
-            					    Integer result=(Integer)md.invoke(obj, todoTask.getDocumentId(), 
+								if (delayCls.startsWith(FormCtrlPrefix.GROOVY_SCRIPT)) {
+									groovyEngineService.execute(delayCls, 
+											todoTask.getDocumentId(), 
             					    		todoTask.getTaskId());
-            					    delayMins=result.intValue();
-        						} else {
-        							LOG.error("延迟执行策略反射类不是ICommitTaskDelayPolicy接口的实现类！"
-        									+ "className="+delayCls);
-        						}
+								} else {
+									Class<?> clz = Class.forName(delayCls);
+	        						Object obj = clz.newInstance();
+	        						if (obj instanceof ICommitTaskDelayPolicy) {
+	        							// 获取方法
+	            					    Method md = obj.getClass().getDeclaredMethod(
+	            								"execute", String.class, String.class);
+	            						 // 调用方法
+	            					    Integer result=(Integer)md.invoke(obj, todoTask.getDocumentId(), 
+	            					    		todoTask.getTaskId());
+	            					    delayMins=result.intValue();
+	        						} else {
+	        							LOG.error("延迟执行策略反射类不是ICommitTaskDelayPolicy接口的实现类！"
+	        									+ "className="+delayCls);
+	        						}
+								}
 							} catch (Exception ex) {
 								delayMins=0;
 								LOG.error("提交延迟执行策略异常！", ex);
