@@ -391,7 +391,11 @@
 			<!--本地jar的路径,相对或者绝对都可以 -->
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/xmlparserv2.jar</systemPath>
 		</dependency>
-		
+		<dependency>
+		    <groupId>org.codehaus.groovy</groupId>
+		    <artifactId>groovy-all</artifactId>
+		    <version>3.0.0-alpha-1</version>
+		</dependency>
   </dependencies>
   <build>
     <finalName>smartformsQuartz</finalName>

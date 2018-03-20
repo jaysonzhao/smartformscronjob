@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.gzsolartech.bpmportal.service.SynchronizedDataService;
 import com.gzsolartech.smartforms.exceptions.SmartformsException;
 /**
- * @description 数据同步 
+ * @description AAC汇率数据同步 
  * @author hhf
  * @date 2017年5月25日 上午10:29:36
  */
