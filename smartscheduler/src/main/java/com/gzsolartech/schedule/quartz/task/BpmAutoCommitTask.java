@@ -37,7 +37,6 @@ import com.gzsolartech.smartforms.entity.OrgEmployee;
 import com.gzsolartech.smartforms.entity.bpm.BpmActivityMeta;
 import com.gzsolartech.smartforms.entity.bpm.BpmGlobalConfig;
 import com.gzsolartech.smartforms.entity.bpm.BpmTaskInfo;
-import com.gzsolartech.smartforms.exceptions.SmartformsException;
 import com.gzsolartech.smartforms.exentity.HttpReturnStatus;
 import com.gzsolartech.smartforms.extproperty.bpm.ICommitTaskDelayPolicy;
 import com.gzsolartech.smartforms.service.DatDocumentService;
@@ -140,15 +139,9 @@ public class BpmAutoCommitTask extends BaseTask {
 			for (BpmTaskInfo todoTask : adminTodoList) {
 				//判断待办任务是否允许自动提交，若环节配置中设置为允许自动提交，
 				//则调用BPM API的提交接口进行任务提交。
-				BpmActivityMeta taskActyMeta=null;
-				try {
-					taskActyMeta=bpmActivityMetaService.getActivityByTaskId(
-							todoTask.getTaskId(), 
-							todoTask.getDocumentId());
-				} catch (SmartformsException e) {
-					LOG.error("获取任务所属环节元数据时发生异常！", e);
-					taskActyMeta=null;
-				}
+				BpmActivityMeta taskActyMeta=bpmActivityMetaService.getActivityByTaskId(
+						todoTask.getTaskId(), 
+						todoTask.getDocumentId());
 				if (taskActyMeta!=null) {
 					String autoCommit=taskActyMeta.getAutoCommit();
 					if (EntitySwitchSignal.ON.equals(autoCommit)) {
