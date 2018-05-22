@@ -13,7 +13,7 @@ Scheduler starts on `http://localhost:8080/smartscheduler/`
 External libs for Tomcat: 
 - foo-commonj-1.1.0.jar, commonj-twm.jar (JSR 237 Timer and WorkManager implementation, used in tomcat) http://commonj.myfoo.de/download.shtml
 - resource-factory-0.1.jar (URL provider implementation, used in tomcat, no use in our project I think(@HT) )
-
+- commonj-1.1.1.jar (@HT: this file should place in tomcat/lib otherwise the classcast will fail)
 
 
 
