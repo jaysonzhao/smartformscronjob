@@ -98,18 +98,19 @@ public class SycnAllDocumentTask extends BaseTask  {
 		
 		for (DatDocument datDocument : docs) {
 				
-				datDocument.setDatApplication(null);
+				
 				//得到docdate
 				 String docdata = XmlDataUtils.toString(datDocument
 						.getDocumentData());
+				 String appName=datDocument.getDatApplication().getAppName();
 				 //清空docdate
+				 datDocument.setDatApplication(null);
 				 datDocument.setDocumentData(null);
 				 JSONObject  jsonObject= JSONObject.parseObject(datDocument.toString());	
 				 
 				 org.json.JSONObject jsoDocData = XML.toJSONObject(docdata);
 				
 				 if (jsoDocData.has("root")) {
-					 		System.out.println(jsoDocData.getJSONObject("root"));
 							jsonObject.put("root", JSONObject.parse(jsoDocData.get("root").toString()));
 				 }
 				
@@ -142,7 +143,7 @@ public class SycnAllDocumentTask extends BaseTask  {
 			 //索引必须为小写
 				 //得到请求的地址ES
 			 String url=config.get("searchCfg").toString()+"/"+
-					PREFIX+datDocument.getFormName().toLowerCase();
+					PREFIX+(appName+datDocument.getFormName()).toLowerCase();
 			  String msg="";
 			 if(serivce.getIndex(datDocument.getFormName().toLowerCase())){
 				 url+="/docinfo/"+datDocument.getDocumentId();
