@@ -3,9 +3,7 @@ package com.gzsolartech.schedule.quartz.task;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.quartz.Scheduler;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 

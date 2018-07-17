@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.gzsolartech.bpmportal.entity.DocSycnUpdateRecord;
 import com.gzsolartech.bpmportal.entity.FormSearchIndexUpdateRecord;
 import com.gzsolartech.smartforms.entity.DatApplication;
 import com.gzsolartech.smartforms.entity.DatDocument;
