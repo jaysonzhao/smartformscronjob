@@ -37,6 +37,7 @@ import com.gzsolartech.smartforms.entity.OrgEmployee;
 import com.gzsolartech.smartforms.entity.bpm.BpmActivityMeta;
 import com.gzsolartech.smartforms.entity.bpm.BpmGlobalConfig;
 import com.gzsolartech.smartforms.entity.bpm.BpmTaskInfo;
+import com.gzsolartech.smartforms.exentity.BpmCommonBusObject;
 import com.gzsolartech.smartforms.exentity.HttpReturnStatus;
 import com.gzsolartech.smartforms.extproperty.bpm.ICommitTaskDelayPolicy;
 import com.gzsolartech.smartforms.service.DatDocumentService;
@@ -109,7 +110,7 @@ public class BpmAutoCommitTask extends BaseTask {
 			} else {
 				try {
 					JSONObject jsoMsg=new JSONObject(retstatus.getMsg());
-					JSONObject jsoMsg2=jsoMsg.optJSONObject("msg");
+					JSONObject jsoMsg2=jsoMsg.optJSONObject("result");
 					if (jsoMsg2==null) {
 						LOG.error("登录返回的数据格式有误！returnMsg="+retstatus.getMsg());
 						return;
@@ -234,7 +235,7 @@ public class BpmAutoCommitTask extends BaseTask {
 						}
 						params.put("appId", appId);
 						params.put("taskId", todoTask.getTaskId());
-						params.put("note", "BPM管理员自动提交");
+						params.put("note", "BPM自动提交");
 						params.put("rollbackGroupType", RollbackGroupStrategy.ALL);
 						params.put("params", "{}");
 						//获取下一环节和下一环节处理人，把这些信息填入提交参数中
@@ -251,7 +252,7 @@ public class BpmAutoCommitTask extends BaseTask {
 								.collect(Collectors.toList());
 						if (!CollectionUtils.isEmpty(nextActies)) {
 							//先按照序号，再按照名称，对环节元数据从小到大进行排序
-							nextActies=nextActies.stream().sorted((e1, e2)->{
+							/*nextActies=nextActies.stream().sorted((e1, e2)->{
 								Integer it1=e1.getSortNum();
 								it1 = (it1==null) ? 0 : it1.intValue();
 								Integer it2=e2.getSortNum();
@@ -261,35 +262,43 @@ public class BpmAutoCommitTask extends BaseTask {
 								} else {
 									return it1.compareTo(it2);
 								}
-							}).collect(Collectors.toList());
+							}).collect(Collectors.toList());*/
 							
-							int sortNum=0;
+							//int sortNum=0;
 							for (BpmActivityMeta nextActy : nextActies) {
 								//判断是否会签环节，会签环节不支持自动提交，所以不会为会签环节赋值处理人
 								if (BpmActivityType.ALONE_SIGN.equals(nextActy.getHandleSignType())) {
-									String nodeIdKey="__nextNodeId_"+sortNum;
-									jsoNextNodes.put(nodeIdKey, nextActy.getActivityBpdId());
-									String ownerKey="__nextOwner_"+sortNum+"_num";
-									String ownerNameKey="__nextOwner_"+sortNum;
-									BpmActivityMeta actyMeta=bpmActivityMetaService.getNextToPerson(
-											nextActy.getActivityBpdId(), 
-											todoTask.getSnapshotBpdId(), 
-											todoTask.getDocumentId());
-									String nextOwnersStr=actyMeta.getDefaultOwnersName();
-									List<OrgEmployee> nextOwnerEmps=UserDialogTagUtils
-											.parseUserSelects(nextOwnersStr);
-									if (CollectionUtils.isEmpty(nextOwnerEmps)) {
-										jsoNextOwners.put(ownerKey, "");
-										jsoNextOwnerNames.put(ownerNameKey, "");
-									} else {
-										jsoNextOwners.put(ownerKey, nextOwnersStr);
-										String tmpOwnerNames="";
-										for (OrgEmployee orgemp : nextOwnerEmps) {
-											tmpOwnerNames+=orgemp.getNickName()+";";
+									String ownerKey=StringUtils.isBlank(nextActy.getAssignVarName()) ? 
+											BpmCommonBusObject.NEXT_OWNER_VARNAME[0] : nextActy.getAssignVarName();
+									if (ownerKey.startsWith("nextOwners_")) {
+										String sno=ownerKey.replace("nextOwners_", "");
+										ownerKey="__nextOwner_"+sno+"_num";
+										String nodeIdKey="__nextNodeId_"+sno;
+										String ownerNameKey="__nextOwner_"+sno;
+										//String nodeIdKey="__nextNodeId_"+sno;
+										jsoNextNodes.put(nodeIdKey, nextActy.getActivityBpdId());
+										//String ownerKey="__nextOwner_"+sortNum+"_num";
+										//String ownerNameKey="__nextOwner_"+sortNum;
+										BpmActivityMeta actyMeta=bpmActivityMetaService.getNextToPerson(
+												nextActy.getActivityBpdId(), 
+												todoTask.getSnapshotBpdId(), 
+												todoTask.getDocumentId());
+										String nextOwnersStr=actyMeta.getDefaultOwnersName();
+										List<OrgEmployee> nextOwnerEmps=UserDialogTagUtils
+												.parseUserSelects(nextOwnersStr);
+										if (CollectionUtils.isEmpty(nextOwnerEmps)) {
+											jsoNextOwners.put(ownerKey, "");
+											jsoNextOwnerNames.put(ownerNameKey, "");
+										} else {
+											jsoNextOwners.put(ownerKey, nextOwnersStr);
+											String tmpOwnerNames="";
+											for (OrgEmployee orgemp : nextOwnerEmps) {
+												tmpOwnerNames+=orgemp.getNickName()+";";
+											}
+											jsoNextOwnerNames.put(ownerNameKey, tmpOwnerNames);
 										}
-										jsoNextOwnerNames.put(ownerNameKey, tmpOwnerNames);
 									}
-									sortNum++;
+									//sortNum++;
 								}
 							}
 						}
