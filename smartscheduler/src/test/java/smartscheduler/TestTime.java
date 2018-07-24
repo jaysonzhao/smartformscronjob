@@ -9,7 +9,7 @@ public class TestTime {
 
 	public static void main(String[] args) throws InterruptedException {
 		Timestamp tsnow=new Timestamp(System.currentTimeMillis());
-		Thread.sleep(5000);
+		Thread.sleep(1000);
 		LocalDateTime ldtnow=LocalDateTime.now();
 		LocalDateTime newLdt=ldtnow.plusMinutes(5);
 		LocalDateTime ldtts=LocalDateTime.ofInstant(Instant.ofEpochMilli(tsnow.getTime()), ZoneId.of("Asia/Shanghai"));
