@@ -89,7 +89,9 @@ public class BpmAutoCommitTask extends BaseTask {
 			LOG.error("找不到BPM管理员帐号，无法进行待办自动提交操作！");
 			return;
 		}
+		LOG.debug("启动自动提交调度任务......");
 		List<BpmTaskInfo> adminTodoList=bpmTaskInfoService.getUserAllTaskInfo(orgadminEmp.getEmpNum());
+		LOG.debug("获取BPM管理员待办任务 "+adminTodoList.size()+" 条，empNum="+orgadminEmp.getEmpNum());
 		if (!CollectionUtils.isEmpty(adminTodoList)) {
 			HttpLightUtils httpUtils=new HttpLightUtils();
 			CloseableHttpClient httpClient=httpUtils.getClient();
@@ -102,6 +104,7 @@ public class BpmAutoCommitTask extends BaseTask {
 			//登录获取Token
 			String loginUrl=apiHost+MessageFormat.format(BpmApiPathPrefix.BPM_LOGIN, 
 					bpmcfg.getBpmAdminName(), bpmcfg.getBpmAdminPsw());
+			LOG.debug("登录BPM......");
 			HttpReturnStatus retstatus=httpUtils.doPost(httpClient, loginUrl, new HashMap<>());
 			String token="";
 			if (HttpStatus.SC_OK!=retstatus.getCode()) {
@@ -137,9 +140,12 @@ public class BpmAutoCommitTask extends BaseTask {
 			}
 			BpmTaskUtils taskUtils=new BpmTaskUtils(bpmcfg, true);
 			
+			int forcount=1;
 			for (BpmTaskInfo todoTask : adminTodoList) {
 				//判断待办任务是否允许自动提交，若环节配置中设置为允许自动提交，
 				//则调用BPM API的提交接口进行任务提交。
+				LOG.debug("正在自动提交第 "+forcount+" 个待办任务, taskId="+todoTask.getTaskId());
+				forcount++;
 				BpmActivityMeta taskActyMeta=bpmActivityMetaService.getActivityByTaskId(
 						todoTask.getTaskId(), 
 						todoTask.getDocumentId());
@@ -148,6 +154,7 @@ public class BpmAutoCommitTask extends BaseTask {
 					if (EntitySwitchSignal.ON.equals(autoCommit)) {
 						//获取BPM任务详细判断，判断任务处理人是否BPM管理员
 						//如果不是的话，则跳过任务，不进行提交
+						LOG.debug("获取任务详细信息，taskId="+todoTask.getTaskId());
 						HttpReturnStatus taskHttpStatus=taskUtils.getTaskDetails(cookies.get(0), 
 								todoTask.getTaskId());
 						if (BpmClientUtils.isErrorResult(taskHttpStatus)) {
@@ -176,6 +183,7 @@ public class BpmAutoCommitTask extends BaseTask {
 						
 						//判断是否要延迟执行提交
 						String delayCls=taskActyMeta.getCommitDelayCls();
+						LOG.debug("延迟执行提交策略类="+delayCls);
 						if (StringUtils.isNotBlank(delayCls)) {
 							int delayMins=0;
 							try {
@@ -308,7 +316,10 @@ public class BpmAutoCommitTask extends BaseTask {
 						//自动提交标志位
 						params.put("autoCommit", "1");
 						
+						LOG.debug("自动提交任务POST请求地址："+url);
+						LOG.debug("自动提交任务POST请求参数："+params);
 						HttpReturnStatus commitStatus=httpUtils.doPost(httpClient, url, params);
+						LOG.debug("自动提交任务POST返回：("+commitStatus.getCode()+"), "+ commitStatus.getMsg());
 						if (HttpStatus.SC_OK!=commitStatus.getCode()) {
 							//提交失败
 							LOG.error("BPM管理员自动提交审批任务失败！taskId="+todoTask.getTaskId()+
