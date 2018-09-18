@@ -85,7 +85,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
-		<resource-ref>
+	<resource-ref>
 	    <description>WorkManager Reference</description>
 		<res-ref-name>wm/myWorkManager</res-ref-name>
 		<res-type>commonj.work.WorkManager</res-type>

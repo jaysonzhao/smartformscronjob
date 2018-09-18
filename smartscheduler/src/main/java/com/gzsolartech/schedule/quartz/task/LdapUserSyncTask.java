@@ -3,6 +3,8 @@ package com.gzsolartech.schedule.quartz.task;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,8 @@ import com.gzsolartech.smartforms.ldap.UserSync;
 
 @Component
 public class LdapUserSyncTask extends BaseTask {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LdapUserSyncTask.class);
 	/**
 	 * 
 	 */
@@ -27,7 +31,11 @@ public class LdapUserSyncTask extends BaseTask {
 		SysTimgJob sysTimgJob = sysTimgJobService.getScheduleJob(jobId);
 		UserSync userSync = (UserSync) applicationContext
 				.getBean("userSync");
-		userSync.insert();
+		try {
+			userSync.insert();
+		} catch (Exception e) {
+			LOG.error("同步LDAP用户时发生异常！", e);
+		}
 		String stopDate = sdf.format(new Date());
 		sysTimgJob.setStartRunTime(startDate);
 		sysTimgJob.setLastRunTime(stopDate);
