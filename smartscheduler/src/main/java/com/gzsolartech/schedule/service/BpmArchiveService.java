@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.apache.http.cookie.Cookie;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,7 +27,6 @@ import com.gzsolartech.smartforms.exentity.HttpReturnStatus;
 import com.gzsolartech.smartforms.service.BaseDataService;
 import com.gzsolartech.smartforms.service.DatDocumentService;
 import com.gzsolartech.smartforms.service.SysOptrLogService;
-import com.gzsolartech.smartforms.service.bpm.BpmInstanceInfoService;
 import com.gzsolartech.smartforms.utils.bpm.BpmClientUtils;
 import com.gzsolartech.smartforms.utils.bpm.BpmInstanceUtils;
 
@@ -47,8 +45,6 @@ public class BpmArchiveService extends BaseDataService {
 	private SysOptrLogService sysOptrLogService;
 	@Autowired
 	private DatDocumentService datDocumentService;
-	@Autowired
-	private BpmInstanceInfoService bpmInstanceInfoService;
 	
 	/**
 	 * 获取未归档的流程实例信息
